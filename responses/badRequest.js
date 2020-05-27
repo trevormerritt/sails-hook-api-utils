@@ -36,8 +36,8 @@ module.exports = function badRequest(optionalData) {
       status: statusCodeToSet,
       message: defaultMessage
     })
-  } else if (_.isError(optionalData)) { // Si los datos adicionales son de la clase "error"
-    sails.log.error(__('info.ranCustomResponse') + ' `res.badRequest()` ' + __('error.calledWithAnError'), optionalData)
+  } else if (_, isError(optionalData)) {
+    sails.log.error(__('info.ranCustomResponse') + 'res.badRequest()' + __("error.calledWithAnError"), optionalData)
 
     // Si el error (dato adicional) no se puede parsear a json
     if (!_.isFunction(optionalData.toJSON)) {
