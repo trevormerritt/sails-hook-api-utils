@@ -16,8 +16,6 @@ const policies = require('./policies/index.js')
  */
 const responses = require('./responses/index.js')
 
-const i18n = require()
-
 module.exports = function apiUtils(sails) {
   return {
     //  ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗    ██████╗ ███████╗███████╗ █████╗ ██╗   ██╗██╗  ████████╗    
