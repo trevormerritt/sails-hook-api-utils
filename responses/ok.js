@@ -1,4 +1,3 @@
-
 //   ██████╗ ██╗  ██╗    ██████╗ ███████╗███████╗██████╗  ██████╗ ███╗   ██╗███████╗███████╗
 //  ██╔═══██╗██║ ██╔╝    ██╔══██╗██╔════╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔════╝██╔════╝
 //  ██║   ██║█████╔╝     ██████╔╝█████╗  ███████╗██████╔╝██║   ██║██╔██╗ ██║███████╗█████╗
@@ -17,43 +16,33 @@ module.exports = function ok(optionalData) {
   var req = this.req
   var res = this.res
 
-  // Define the status code to send in the response.
-  var statusCodeToSet = 400
+  const i18n = require("i18n")
 
-  // Si se retorna un array o si no existe la option blueprintAction, estamos ante un uso indebido
-  // If an array is returned or if the option blueprintAction does not exist, we are facing an improper use
-  if (_.isArray(optionalData) || !req.options.blueprintAction) {
-    // TODO: No deberia haber algun caso donde se retorne un array mas que un item, salvo el find,
-    // pero puede ser que se este escapando alguna condicion no analizada
-    // TODO: There should be no case where an array is returned rather than an item, except find,
-    // but it could be that some unanalyzed condition is escaping
+  i18n.configure({
+    locales: ['en', 'es', 'fr'],
+    directory: __dirname + '/locales',
+    defaultLocale: req.getLocale()
+  })
 
-    const mensaje = __('info.successUnknown')
-    sails.log.error(mensaje, optionalData)
-    return res.serverError(new Error(mensaje))
-  } else { // Si no es array y existe la option blueprintAction estamos en un caso valido
-    let message = ''
+  var payload = {
+    success: true,
+    message: i18n.__('info.successUnknown'),
+    data: {}
+  }
+
+  if (req.options.blueprintAction) {
+    payload.message = i18n.__('word.action') + ' ' + req.options.blueprintAction + ' ' + i18n.__('info.aboutModel') + ' ' + req.options.model
+    payload.data = optionalData
+
     switch (req.options.blueprintAction) {
-      case 'findOne': // GET a /model/:id
-      case 'update': // PATCH a /model/:id
-      case 'destroy': // DELETE a /model/:id
-      case 'create': // POST a /model
-        message = __('word.action') + req.options.blueprintAction + __('info:aboutModel') + req.options.model
-        break
-      case 'add': // PUT a /model/:id/relationToMany/:id
-      case 'remove': // DELETE a /model/:id/relationToMany/:id
+      case 'add':     // PUT a /model/:id/relationToMany/:id
+      case 'remove':  // DELETE a /model/:id/relationToMany/:id
       case 'replace': // PUT a /model/:id/relationToMany
-        message = __('word.action') + req.options.blueprintAction + __('info:aboutModel') + req.options.model +
-          __('info.andTheRelation') + req.options.alias
+        payload.message += i18n.__('info.andTheRelation') + req.options.alias
         break
     }
-
-    // Retorna una respuesta custom
-    return res.successResponse({
-      message,
-      data: {
-        result: optionalData
-      }
-    })
+    return res.successResponse({ code: 200, payload: payload })
+  } else {
+    return res.serverError({ code: 500, payload: payload })
   }
 }

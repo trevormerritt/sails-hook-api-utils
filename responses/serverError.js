@@ -18,39 +18,26 @@
 //  ┌─┐┌─┐┬─┐┬  ┬┌─┐┬─┐  ┌─┐┬─┐┬─┐┌─┐┬─┐
 //  └─┐├┤ ├┬┘└┐┌┘├┤ ├┬┘  ├┤ ├┬┘├┬┘│ │├┬┘
 //  └─┘└─┘┴└─ └┘ └─┘┴└─  └─┘┴└─┴└─└─┘┴└─
-module.exports = function serverError(optionalData) {
-  // Get access to `req` and `res`
+module.exports = function serverError(params) {
   var req = this.req
   var res = this.res
 
-  // Si no se dieron datos adicionales, muestra un errorResponse tradicional
-  if (optionalData === undefined) {
-    sails.log.error(__('info.ranCustomResponse') + 'res.serverError()')
-    return res.errorResponse()
-  }
-  // Si los datos adicionales son de la clase "error"
-  else if (_.isError(optionalData)) {
-    sails.log.error(__('info.ranCustomResponse') + ' `res.serverError()` ' + __('error.calledWithAnError'), optionalData)
+  const i18n = require("i18n")
 
-    // Si el error (dato adicional) no se puede parsear a json y no estamos en produccion
-    if (!_.isFunction(optionalData.toJSON) && process.env.NODE_ENV !== 'production') {
-      return res.errorResponse({
-        message: __('error.serverErrorWithExtras'),
-        data: optionalData.stack
-      })
-    }
+  i18n.configure({
+    locales: ['en', 'es', 'fr'],
+    directory: __dirname + '/locales',
+    defaultLocale: req.getLocale
+  })
+
+  var payload = {
+    success: false,
+    message: i18n.__('info.successUnknown')
   }
-  // Si se llega hasta aca es porque el dato adicional no es de la clase error o
-  // tiene funcion toJSON
-  // Si esta en produccion, no devuelve nada mas que un errorResponse
-  if (process.env.NODE_ENV === 'production') {
-    return res.errorResponse()
-  } else {
-    // Si NO estamos en produccion (dev, etc) se envia la info adicional
-    // en el campo data
-    return res.errorResponse({
-      message: __('error.serverErrorWithExtras'),
-      data: optionalData
-    })
+
+  // If we have optional data, figure out how to attach it to the payload
+  if (params.data !== undefined) {
+    payload.data = params.data
   }
+  return res.status(params.code).json(payload)
 }

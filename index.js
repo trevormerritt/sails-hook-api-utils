@@ -16,6 +16,8 @@ const policies = require('./policies/index.js')
  */
 const responses = require('./responses/index.js')
 
+const i18n = require("i18n")
+
 module.exports = function apiUtils(sails) {
   return {
     //  ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗    ██████╗ ███████╗███████╗ █████╗ ██╗   ██╗██╗  ████████╗    
@@ -120,6 +122,12 @@ module.exports = function apiUtils(sails) {
     initialize: (cb) => {
       var eventsToWaitFor = ['hook:orm:loaded', 'hook:organics:loaded', 'hook:blueprints:loaded'];
       sails.after(eventsToWaitFor, function () {
+        console.log('************************i18n START******************')
+        i18n.configure({
+          locales: ['en', 'es', 'fr'],
+          directory: './locales'
+        })
+        console.log('************************i18n DONE******************')
         //  ┌─┐┌┐┌┌─┐┌┬┐┬ ┬┌─┐┬─┐  ┬ ┬┌─┐┌─┐┬┌─  ┌┬┐┌─┐┌─┐┌─┐┌┐┌┌┬┐┌─┐┌┐┌┌─┐┬┌─┐┌─┐
         //  ├─┤││││ │ │ ├─┤├┤ ├┬┘  ├─┤│ ││ │├┴┐   ││├┤ ├─┘├┤ │││ ││├┤ ││││  │├┤ └─┐
         //  ┴ ┴┘└┘└─┘ ┴ ┴ ┴└─┘┴└─  ┴ ┴└─┘└─┘┴ ┴  ─┴┘└─┘┴  └─┘┘└┘─┴┘└─┘┘└┘└─┘┴└─┘└─┘
@@ -148,12 +156,6 @@ module.exports = function apiUtils(sails) {
         //  └─┘└─┘┘└┘└  ┴└─┘└─┘┴└─┴ ┴ ┴ ┴└─┘┘└┘ 
         // MORE INFO: Reed last few lines inside passport/passport.js
         passport.configJwtStrategy(sails, passport)
-
-        // Configure I18N
-        i18n.configure({
-          locales: ['en', 'es', 'fr'],
-          directory: __dirname + '/locales'
-        });
 
         // Finish initializing custom hook
         // Then call cb()

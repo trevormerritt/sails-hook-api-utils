@@ -24,50 +24,18 @@ module.exports = function notFound(optionalData) {
   const req = this.req
   const res = this.res
 
-  // Define the status code to send in the response.
-  const statusCodeToSet = 404
+  const i18n = require("i18n")
 
-  // Defines default message
-  const message = __('error.notFound')
+  i18n.configure({
+    locales: ['en', 'es', 'fr'],
+    directory: __dirname + '/locales',
+    defaultLocale: req.getLocale
+  })
 
-  // Si no hay datos adicionales, envia un error 404 con el mensaje determinado
-  if (optionalData === undefined) {
-    sails.log.error(__('info.ranCustomResponse') + 'res.notFound()')
-    return res.errorResponse({
-      status: statusCodeToSet,
-      message
-    })
-  }
-  // Si los datos adicionales son de la clase error
-  else if (_.isError(optionalData)) {
-    sails.log.error(__('info.ranCustomResponse') + 'res.notFound()' + __('error.calledWithAnError'), optionalData)
-
-    // Si los datos adicionales se pueden parsear a json y no estamos en produccion
-    if (!_.isFunction(optionalData.toJSON) && process.env.NODE_ENV !== 'production') {
-      // Si NO estamos en produccion (dev, etc) se envia la info adicional
-      // en el campo data
-      return res.errorResponse({
-        status: statusCodeToSet,
-        message,
-        data: optionalData.stack
-      })
+  return res.errorResponse({
+    code: 404, payload: {
+      status: 404,
+      message: i18n.__('error.notFound')
     }
-  }
-  // Si se llega hasta aca es porque el dato adicional no es de la clase error o
-  // tiene funcion toJSON
-  // Si esta en produccion, no devuelve nada mas que un errorResponse con el mensaje
-  if (process.env.NODE_ENV === 'production') {
-    return res.errorResponse({
-      status: statusCodeToSet,
-      message
-    })
-  } else {
-    // Si NO estamos en produccion (dev, etc) se envia la info adicional
-    // en el campo data
-    return res.errorResponse({
-      status: statusCodeToSet,
-      message,
-      data: optionalData
-    })
-  }
+  })
 }

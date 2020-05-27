@@ -24,55 +24,22 @@ module.exports = function badRequest(optionalData) {
   var req = this.req
   var res = this.res
 
-  // Status por defecto
-  const statusCodeToSet = 400
-  const defaultMessage = __('info.defaultMessage')
+  const i18n = require("i18n")
 
-  // Si no se dieron params, solo manda un mensaje de solicitud invalida
-  if (optionalData === undefined) {
-    sails.log.info(__('info.ranCustomResponse') + ': res.badRequest()')
-
-    return res.errorResponse({
-      status: statusCodeToSet,
-      message: defaultMessage
-    })
-  } else if (_, isError(optionalData)) {
-    sails.log.error(__('info.ranCustomResponse') + 'res.badRequest()' + __("error.calledWithAnError"), optionalData)
-
-    // Si el error (dato adicional) no se puede parsear a json
-    if (!_.isFunction(optionalData.toJSON)) {
-      // Si esta en modo prod, envia ademas el stack para que sea mas facil debug
-      if (process.env.NODE_ENV !== 'production') {
-        return res.errorResponse({
-          status: statusCodeToSet,
-          message: optionalData.message,
-          data: optionalData.stack
-        })
-      } else {
-        return res.errorResponse({
-          status: statusCodeToSet,
-          message: optionalData.message
-        })
-      }
-    } else {
-      // Si esta en modo prod, envia ademas el stack para que sea mas facil debug
-      if (process.env.NODE_ENV !== 'production') {
-        return res.errorResponse({
-          status: statusCodeToSet,
-          message: optionalData.message,
-          data: optionalData
-        })
-      } else {
-        return res.errorResponse({
-          status: statusCodeToSet,
-          message: optionalData.message
-        })
-      }
-    }
-  }
-  // Si se llega hasta aca es porque el dato adicional no es de la clase error
-  return res.errorResponse({
-    status: statusCodeToSet,
-    message: defaultMessage
+  i18n.configure({
+    locales: ['en', 'es', 'fr'],
+    directory: __dirname + '/locales',
+    defaultLocale: req.getLocale
   })
+
+  var payload = {
+    status: 400,
+    message: i18n.__('info.defaultMessage')
+  }
+
+  if (optionalData !== undefined) {
+    payload.data = optionalData
+  }
+
+  return res.errorResponse(payload)
 }
