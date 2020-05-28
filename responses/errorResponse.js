@@ -24,7 +24,5 @@
 module.exports = function errorResponse(params) {
   // Get access to `req` and `res`
   //const req = this.req
-  const res = this.res
-
-  return res.status(params.code).json(params.payload)
+  return this.res.status(params.code).json(params.data).send()
 }

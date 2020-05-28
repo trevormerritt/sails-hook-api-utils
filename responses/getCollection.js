@@ -63,7 +63,7 @@ module.exports = function getCollection(params) {
     params.pagination.totalEntries === x || !_.isNumber(params.pagination.totalEntries)
   ) {
     return res.successResponse({
-      code: 200, payload: {
+      code: 200, data: {
         success: true,
         message: i18n.__('info.success'),
         data: {
@@ -74,7 +74,7 @@ module.exports = function getCollection(params) {
     })
   } else {
     return res.errorResponse({
-      code: 400, payload: {
+      code: 400, data: {
         success: false,
         message: i18n.__('error:missingParameters')
       }

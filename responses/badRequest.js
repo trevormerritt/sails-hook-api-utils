@@ -19,7 +19,7 @@
 //  ┌┐ ┌─┐┌┬┐  ┬─┐┌─┐┌─┐ ┬ ┬┌─┐┌─┐┌┬┐
 //  ├┴┐├─┤ ││  ├┬┘├┤ │─┼┐│ │├┤ └─┐ │
 //  └─┘┴ ┴─┴┘  ┴└─└─┘└─┘└└─┘└─┘└─┘ ┴
-module.exports = function badRequest(optionalData) {
+module.exports = function badRequest(params) {
   // Get access to `req` and `res`
   var req = this.req
   var res = this.res
@@ -32,14 +32,17 @@ module.exports = function badRequest(optionalData) {
     defaultLocale: req.getLocale
   })
 
+  // we don't want the 'message' being duplicated in the data
+  var message = params.message
+  params.message = undefined
+
   var payload = {
-    status: 400,
-    message: i18n.__('info.defaultMessage')
+    code: 400,
+    data: {
+      success: false,
+      message: message,
+      data: params
+    }
   }
-
-  if (optionalData !== undefined) {
-    payload.data = optionalData
-  }
-
   return res.errorResponse(payload)
 }

@@ -32,10 +32,13 @@ module.exports = function forbidden(optionalData) {
     defaultLocale: req.getLocale
   })
 
-  var payload = {
-    success: false,
-    message: i18n.__("error:accessDenied")
-  }
+  console.error("*********************************FORBIDDEN: ", params)
 
-  return res.errorResponse({ code: 403, payload: payload })
+  return res.errorResponse({
+    code: 403,
+    data: {
+      success: false,
+      message: i18n.__("error:accessDenied")
+    }
+  })
 }

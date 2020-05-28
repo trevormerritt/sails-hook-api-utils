@@ -39,5 +39,5 @@ module.exports = function serverError(params) {
   if (params.data !== undefined) {
     payload.data = params.data
   }
-  return res.status(params.code).json(payload)
+  return res.status(params.code).json(params.data).send()
 }

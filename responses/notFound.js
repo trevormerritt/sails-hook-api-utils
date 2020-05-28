@@ -19,7 +19,7 @@
 //  ┌┐┌┌─┐┌┬┐  ┌─┐┌─┐┬ ┬┌┐┌┌┬┐
 //  ││││ │ │   ├┤ │ ││ ││││ ││
 //  ┘└┘└─┘ ┴   └  └─┘└─┘┘└┘─┴┘
-module.exports = function notFound(optionalData) {
+module.exports = function notFound(params) {
   // Get access to `req` and `res`
   const req = this.req
   const res = this.res
@@ -32,9 +32,12 @@ module.exports = function notFound(optionalData) {
     defaultLocale: req.getLocale
   })
 
+  console.error("*********************************NOT_FOUND: ", params)
+
   return res.errorResponse({
-    code: 404, payload: {
-      status: 404,
+    code: 404,
+    data: {
+      success: false,
       message: i18n.__('error.notFound')
     }
   })

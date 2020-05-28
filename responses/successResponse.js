@@ -28,14 +28,8 @@
  *    message: 'El mensaje que se deberia mostrar',   <--- The message that should be displayed
  *    data: diccionario js con data adicional         <--- JS Dictionary with Additional Data
  * }
- *
+ *params
  */
 module.exports = function successResponse(params) {
-  // Get access to `req` and `res`
-  const req = this.req
-  const res = this.res
-
-  console.log("SUCCESS PAYLOAD: ", params);
-
-  return res.status(params.code).json(params.payload).send()
+  return this.res.status(params.code).json(params.data).send()
 }
