@@ -122,12 +122,10 @@ module.exports = function apiUtils(sails) {
     initialize: (cb) => {
       var eventsToWaitFor = ['hook:orm:loaded', 'hook:organics:loaded', 'hook:blueprints:loaded'];
       sails.after(eventsToWaitFor, function () {
-        console.log('************************i18n START******************')
         i18n.configure({
           locales: ['en', 'es', 'fr'],
           directory: './locales'
         })
-        console.log('************************i18n DONE******************')
         //  ┌─┐┌┐┌┌─┐┌┬┐┬ ┬┌─┐┬─┐  ┬ ┬┌─┐┌─┐┬┌─  ┌┬┐┌─┐┌─┐┌─┐┌┐┌┌┬┐┌─┐┌┐┌┌─┐┬┌─┐┌─┐
         //  ├─┤││││ │ │ ├─┤├┤ ├┬┘  ├─┤│ ││ │├┴┐   ││├┤ ├─┘├┤ │││ ││├┤ ││││  │├┤ └─┐
         //  ┴ ┴┘└┘└─┘ ┴ ┴ ┴└─┘┴└─  ┴ ┴└─┘└─┘┴ ┴  ─┴┘└─┘┴  └─┘┘└┘─┴┘└─┘┘└┘└─┘┴└─┘└─┘
